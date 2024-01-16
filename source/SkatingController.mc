@@ -25,6 +25,8 @@ class Controller {
 	const STAT_LAP = 3;
 	const STAT_TOTAL = 4;
 	const STAT_MAP = 5;
+
+	const REFRESH_TIME = 1000;
 	
 	var firstView = STAT_STD;
 	var lastView = STAT_TOTAL;
@@ -34,7 +36,10 @@ class Controller {
 		_fitManager = Application.getApp().fitManager;
 		_skatingView = Application.getApp().skatingView;
 		status = STAT_IDLE;
-        Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
+		var options = {
+         :acquisitionType => Position.LOCATION_CONTINUOUS
+     	};
+        Position.enableLocationEvents(options, method(:onPosition));
         setupTimer();
         device = WatchUi.loadResource(Rez.Strings.device_type);
     }
@@ -43,26 +48,24 @@ class Controller {
 	
 	function setupTimer() {
 		timerUpdate = new Timer.Timer();
-		timerUpdate.start(method(:removeInitViewAndStartUp), 1200, false);
+		timerUpdate.start(method(:removeInitViewAndStartUp), 1500, false);
 	}
 	
-		function updateEverySecond(){
-			_fitManager.updateFitData();
-		    WatchUi.requestUpdate();
-		}
+	function refreshDataAndView() {
+		_fitManager.updateFitData();
+		WatchUi.requestUpdate();
+	}
 	
     
-    function removeInitViewAndStartUp (){
+    function removeInitViewAndStartUp() {
     	WatchUi.switchToView(_skatingView, new SkatingDelegate(), WatchUi.SLIDE_RIGHT);
-		timerUpdate.start(method(:updateEverySecond), 1000, true);
+		timerUpdate.start(method(:refreshDataAndView), REFRESH_TIME, true);
     }
     
-    function onPosition(info) {
-		//_skatingView.updatePosition(info);
-    	//WatchUi.requestUpdate();
+    function onPosition(info as Position.Info) {
     }
     
-    function handleStartStop(){
+    function handleStartStop() {
     	if (_fitManager.hasSession() == false) { // Inital start
 			_fitManager.sessionStart();
 			status = STAT_STD;
@@ -75,7 +78,7 @@ class Controller {
 	    }
     }
     
-    function handleLap(){
+    function handleLap() {
     	if (_fitManager.isRecording()) {
     		_fitManager.newSessionLap();
     		hasLab = true;
@@ -95,7 +98,7 @@ class Controller {
 	    }
     }
     
-    function handlePageSwitch(switchPage){
+    function handlePageSwitch(switchPage) {
     	var posInfo = Position.getInfo();
         if (device.equals("maps") && (posInfo.accuracy > 3)) {
         	lastView = STAT_MAP;

@@ -140,19 +140,19 @@ class FitManager {
     function createSession(value) {	
 	    System.println("createSession SkatingDelegate");
 		if (value == ActivityRecording.SPORT_INLINE_SKATING) {
-		    var s = ActivityRecording.createSession({     // set up recording session
-		        :name=>"Inline Skating",                        // set session name
-		        :sport=>ActivityRecording.SPORT_INLINE_SKATING, // set sport type
-		        :subSport=>ActivityRecording.SUB_SPORT_GENERIC, // set sub sport type
+		    var s = ActivityRecording.createSession({    
+		        :name=>"Inline Skating",                       
+		        :sport=>ActivityRecording.SPORT_INLINE_SKATING,
+		        :subSport=>ActivityRecording.SUB_SPORT_GENERIC,
 		    });
 	    	System.println("Session created.");
 		    return s;
 	    }
-	    if (value == ActivityRecording.SPORT_RUNNING){
-		    var s = ActivityRecording.createSession({     // set up recording session
-		        :name=>"Inline Skating",                        // set session name
-		        :sport=>ActivityRecording.SPORT_RUNNING, // set sport type
-		        :subSport=>ActivityRecording.SUB_SPORT_GENERIC, // set sub sport type
+	    if (value == ActivityRecording.SPORT_ICE_SKATING){
+		    var s = ActivityRecording.createSession({    
+		        :name=>"Ice Skating",
+		        :sport=>ActivityRecording.SPORT_ICE_SKATING,
+		        :subSport=>ActivityRecording.SUB_SPORT_GENERIC,
 		    });
 	    	System.println("Session created.");
 		    return s;

@@ -30,7 +30,7 @@
 	displayInActivitySummary="true"
 	fillColor="#0E73AD" />
 	<fitField id="3"
-	sortOrder="3"
+	sortOrder="4"
 	precision="1"
 	chartTitle="@Strings.chart_title_stride_length_avg"
 	dataLabel="@Strings.data_label_stride_length_avg"
@@ -40,7 +40,7 @@
 	displayInActivitySummary="true"
 	fillColor="#0E73AD" />
 	<fitField id="4"
-	sortOrder="1"
+	sortOrder="5"
 	precision="2"
 	chartTitle="@Strings.chart_title_glide_time"
 	dataLabel="@Strings.data_label_glide_time"
@@ -50,7 +50,7 @@
 	displayInActivitySummary="true"
 	fillColor="#0E73AD" />
 	<fitField id="5"
-	sortOrder="3"
+	sortOrder="6"
 	precision="2"
 	chartTitle="@Strings.chart_title_glide_time_avg"
 	dataLabel="@Strings.data_label_glide_time_avg"
@@ -60,7 +60,7 @@
 	displayInActivitySummary="true"
 	fillColor="#0E73AD" />
 	<fitField id="6"
-	sortOrder="3"
+	sortOrder="7"
 	precision="1"
 	chartTitle="@Strings.chart_title_cadence_avg"
 	dataLabel="@Strings.data_label_cadence_avg"
@@ -70,7 +70,7 @@
 	displayInActivitySummary="true"
 	fillColor="#0E73AD" />
 	<fitField id="7"
-	sortOrder="3"
+	sortOrder="8"
 	precision="1"
 	chartTitle="@Strings.chart_title_stride_length_avg"
 	dataLabel="@Strings.data_label_stride_length_avg"
@@ -80,7 +80,7 @@
 	displayInActivitySummary="true"
 	fillColor="#0E73AD" />
 	<fitField id="8"
-	sortOrder="3"
+	sortOrder="9"
 	precision="2"
 	chartTitle="@Strings.chart_title_glide_time_avg"
 	dataLabel="@Strings.data_label_glide_time_avg"

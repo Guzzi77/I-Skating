@@ -32,6 +32,8 @@ class SkatingView extends Ui.View {
 	const ICON_CONNECTED_HEART_EMPTY = "2";
 	const ICON_CONNECTED_HEART_FILLED = "3";
 
+	var controller = Controller;
+
 	// --- Layers ---
 	// General:
 	var gridLayer;
@@ -155,7 +157,7 @@ class SkatingView extends Ui.View {
 		full = {:locX=>0, :locY=>0, :width=>100*sw-1, :height=>100*sh-1};
 		//var bottom = {:locX=>35*sw, :locY=>86*sh, :width=>30*sw, :height=>12.5*sh};
         
-        manageStatus (Controller.STAT_INIT);
+        manageStatus (controller.STAT_INIT);
     }
     
     // Call manageStatus if status changed
@@ -166,7 +168,7 @@ class SkatingView extends Ui.View {
     	gridLayer = new Ui.Layer(full);
 	    addLayer(gridLayer);
     	
-    	if (status == Controller.STAT_INIT) {	  
+    	if (status == controller.STAT_INIT) {	  
     		System.println("View status changed: " +  status);
     		
 	        iconsConnectedLayer = new Ui.Layer({:locX=>64*sw, :locY=>8.5*sh, :width=>30, :height=>30});
@@ -213,7 +215,7 @@ class SkatingView extends Ui.View {
 	        caloriesLayer = new Ui.Layer(bottomRight);
 	        addLayer(caloriesLayer);
     	}
-    	if (status == Controller.STAT_STD) {	  
+    	if (status == controller.STAT_STD) {	  
     		System.println("View status changed: " +  status);
 	        
 	        heartRateLayer = new Ui.Layer(full);
@@ -252,7 +254,7 @@ class SkatingView extends Ui.View {
     		viewNameLayer = new Ui.Layer(bottom);
     		addLayer(viewNameLayer);
     	}
-    	if (status == Controller.STAT_LAP){
+    	if (status == controller.STAT_LAP){
     	
 	        heartRateLayer = new Ui.Layer(full);
 	        addLayer(heartRateLayer);
@@ -282,7 +284,7 @@ class SkatingView extends Ui.View {
     		viewNameLayer = new Ui.Layer(bottom);
     		addLayer(viewNameLayer);
     	}
-    	if (status == Controller.STAT_TOTAL) {	  
+    	if (status == controller.STAT_TOTAL) {	  
     		System.println("View status changed: " +  status);
     		
 	        iconsConnectedLayer = new Ui.Layer({:locX=>64*sw, :locY=>8.5*sh, :width=>30, :height=>30});
@@ -352,7 +354,7 @@ class SkatingView extends Ui.View {
 	    	var fontSizeScaleFactor = Gfx.getFontHeight(fontSize) / stdFontHeight;
 	    	while (fontSizeScaleFactor < screenSizeScale) {
 	    		fontSize++;
-	    		fontSizeScaleFactor = Gfx.getFontHeight(fontSize).toFloat() / stdFontHeight;
+	    		fontSizeScaleFactor = Gfx.getFontHeight(fontSize as Gfx.FontType) / stdFontHeight;
 	    	}
 	    	stdFont = fontSize;
 	    	stdFontHeight = Gfx.getFontHeight(stdFont);
@@ -374,29 +376,25 @@ class SkatingView extends Ui.View {
         WatchUi.requestUpdate();
         System.println("Steps at onHide: " + ActivityMonitor.getInfo().steps);
     }
-    
-    
+      
     
     var sleepTimer;
-    
-    function onEnterSleep(){
-    	WatchUi.requestUpdate();
-    	System.println("Entering sleep mode");
-    	sleepTimer = new Timer.Timer();
-		sleepTimer.start(method(:updateDuringSleep), 1000, false);
-    }
-    
-    function updateDuringSleep(){
+
+	function updateDuringSleep() {
     	WatchUi.requestUpdate();
     	System.println("Sleeping power");
     }
     
-    function onExitSleep(){
-    	sleepTimer.stop();
+    function onEnterSleep() {
+    	WatchUi.requestUpdate();
+    	System.println("Entering sleep mode");
+    	sleepTimer = new Timer.Timer();
+		// sleepTimer.start(method(:updateDuringSleep), 1000, false); 
     }
     
-    
-    
+    function onExitSleep() {
+    	sleepTimer.stop();
+    }  
 
     // Update the view
     function onUpdate(dc) {
@@ -409,19 +407,19 @@ class SkatingView extends Ui.View {
     	dc.setColor(foregroundColor, backgroundColor);
     	dc.clear();
         
-        if (status == Controller.STAT_INIT){
+        if (status == controller.STAT_INIT){
         	updateInit();
         }
         
-        if (status == Controller.STAT_STD){
+        if (status == controller.STAT_STD){
         	updateStd();
         }
         
-        if (status == Controller.STAT_LAP){
+        if (status == controller.STAT_LAP){
         	updateLap();
         }
         
-        if (status == Controller.STAT_TOTAL){
+        if (status == controller.STAT_TOTAL){
         	updateTotal();
         }
 		
@@ -677,7 +675,7 @@ class SkatingView extends Ui.View {
     
 	function updateSpeed(dc){
 		var currentSpeed = Activity.getActivityInfo().currentSpeed;
-		if (currentSpeed != null && currentSpeed != 0 && status != Controller.STAT_INIT) {
+		if (currentSpeed != null && currentSpeed != 0 && status != controller.STAT_INIT) {
 			speed = (currentSpeed * 3.6).format("%.1f");
 			speedUnit = "km/h";
 		}
@@ -686,7 +684,7 @@ class SkatingView extends Ui.View {
 	
     function updateLapAvgSpeedLayer(dc){
 		var currentSpeed = _fitManager.getLapAvgVelocity();
-		if (currentSpeed != null && currentSpeed != 0 && status != Controller.STAT_INIT) {
+		if (currentSpeed != null && currentSpeed != 0 && status != controller.STAT_INIT) {
 			speed = (currentSpeed * 3.6).format("%.1f");
 			speedUnit = "km/h";
 		}
@@ -695,7 +693,7 @@ class SkatingView extends Ui.View {
 	
 	function updateTotalAvgSpeedLayer(dc){
 		var currentSpeed = _fitManager.getTotalAvgVelocity();
-		if (currentSpeed != null && currentSpeed != 0 && status != Controller.STAT_INIT) {
+		if (currentSpeed != null && currentSpeed != 0 && status != controller.STAT_INIT) {
 			speed = (currentSpeed * 3.6).format("%.1f");
 			speedUnit = "km/h";
 		}
@@ -721,7 +719,7 @@ class SkatingView extends Ui.View {
     
     	function drawDistance(dc,elapsedDistance){  
 	        System.println("Elapsed distance: " + elapsedDistance);
-	        if (elapsedDistance != null && elapsedDistance != 0 && status != Controller.STAT_INIT){
+	        if (elapsedDistance != null && elapsedDistance != 0 && status != controller.STAT_INIT){
 	        	if (elapsedDistance < 1000){
 	        		distance = elapsedDistance.format("%i");
 	        		distanceUnit = "m";
@@ -746,7 +744,7 @@ class SkatingView extends Ui.View {
     var energyExpenditureTitle = WatchUi.loadResource(Rez.Strings.label_energy_expenditure);
     
     function updateEnergyExpenditure(dc) {
-        if (Activity.getActivityInfo().energyExpenditure != 0.0 && Activity.getActivityInfo().energyExpenditure != null && status != Controller.STAT_INIT) {
+        if (Activity.getActivityInfo().energyExpenditure != 0.0 && Activity.getActivityInfo().energyExpenditure != null && status != controller.STAT_INIT) {
 			energyExpenditure = Activity.getActivityInfo().energyExpenditure.format("%.1f");
 			energyExpenditureUnit = "kcal/min";
 		}
@@ -761,7 +759,7 @@ class SkatingView extends Ui.View {
     var trainingEffectTitle = WatchUi.loadResource(Rez.Strings.label_training_effect);
     
 	function updateTrainingEffect(dc){
-        if (Activity.getActivityInfo().trainingEffect != 0.0 && Activity.getActivityInfo().trainingEffect != null && status != Controller.STAT_INIT){
+        if (Activity.getActivityInfo().trainingEffect != 0.0 && Activity.getActivityInfo().trainingEffect != null && status != controller.STAT_INIT){
 			trainingEffect = Activity.getActivityInfo().trainingEffect.format("%.1f");
 			trainingEffectUnit = " ";
 		}
@@ -776,7 +774,7 @@ class SkatingView extends Ui.View {
     var caloriesTitle = WatchUi.loadResource(Rez.Strings.label_calories);
     
 	function updateCaloriesLayer(dc){
-        if (Activity.getActivityInfo().calories != 0.0 && Activity.getActivityInfo().calories != null && status != Controller.STAT_INIT){
+        if (Activity.getActivityInfo().calories != 0.0 && Activity.getActivityInfo().calories != null && status != controller.STAT_INIT){
 			calories = Activity.getActivityInfo().calories.format("%i");
 			caloriesUnit = "kcal";
 		}
@@ -791,7 +789,7 @@ class SkatingView extends Ui.View {
     var glideTimeTitle = WatchUi.loadResource(Rez.Strings.label_glide_time);
     
     function updateGlideTime(dc){ 
-        if (_fitManager.getGlideTime() != 0.0 && status != Controller.STAT_INIT){
+        if (_fitManager.getGlideTime() != 0.0 && status != controller.STAT_INIT){
 			glideTime = _fitManager.getGlideTime().format("%.1f");
 			glideTimeUnit = "s";
 		}
@@ -801,7 +799,7 @@ class SkatingView extends Ui.View {
 	function updateLapAvgGlideTimeLayer(dc){
         var avgGT = _fitManager.getLapAvgGlideTime();
         
-        if (avgGT != 0.0 && avgGT != null && status != Controller.STAT_INIT){
+        if (avgGT != 0.0 && avgGT != null && status != controller.STAT_INIT){
         	if (avgGT < 10){
 				glideTime = avgGT.format("%.2f");
 				glideTimeUnit = "s";
@@ -817,7 +815,7 @@ class SkatingView extends Ui.View {
     function updateTotalAvgGlideTimeLayer(dc){
         var avgGT = _fitManager.getTotalAvgGlideTime();
         
-        if (avgGT != 0.0 && avgGT != null && status != Controller.STAT_INIT){
+        if (avgGT != 0.0 && avgGT != null && status != controller.STAT_INIT){
         	if (avgGT < 100){
 				glideTime = avgGT.format("%.2f");
 				glideTimeUnit = "s";
@@ -838,7 +836,7 @@ class SkatingView extends Ui.View {
     var cadenceTitle = WatchUi.loadResource(Rez.Strings.label_cadence);
     
     function updateCadence(dc){ 
-        if (_fitManager.getCadence() != 0.0 && status != Controller.STAT_INIT){
+        if (_fitManager.getCadence() != 0.0 && status != controller.STAT_INIT){
 			cadence = _fitManager.getCadence().toNumber().format("%i");
 			cadenceUnit = "spm";
 		}
@@ -848,7 +846,7 @@ class SkatingView extends Ui.View {
 	function updateLapAvgCadenceLayer(dc){
         var avgCad = _fitManager.getLapAvgCadence();
         
-        if (avgCad != 0.0 && avgCad != null && status != Controller.STAT_INIT){
+        if (avgCad != 0.0 && avgCad != null && status != controller.STAT_INIT){
         	if (avgCad < 100){
 				cadence = avgCad.format("%.1f");
 				cadenceUnit = "spm";
@@ -865,7 +863,7 @@ class SkatingView extends Ui.View {
     function updateTotalAvgCadenceLayer(dc){
         var avgCad = _fitManager.getTotalAvgCadence();
         
-        if (avgCad != 0.0 && avgCad != null && status != Controller.STAT_INIT){
+        if (avgCad != 0.0 && avgCad != null && status != controller.STAT_INIT){
         	if (avgCad < 100){
 				cadence = avgCad.format("%.1f");
 				cadenceUnit = "spm";
@@ -889,7 +887,7 @@ class SkatingView extends Ui.View {
     function updateStrideLength(dc){        
 		var currentStrideLength =  _fitManager.getStrideLength();
         
-        if (currentStrideLength != 0.0 && currentStrideLength != null && status != Controller.STAT_INIT){
+        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT){
 			strideLength = currentStrideLength.format("%.1f");
         	strideLengthUnit = "m";
 		}
@@ -899,7 +897,7 @@ class SkatingView extends Ui.View {
 	function updateLapAvgStrideLengthLayer(dc){        
         var currentStrideLength = _fitManager.getLapAvgStrideLength();
         
-        if (currentStrideLength != 0.0 && currentStrideLength != null && status != Controller.STAT_INIT){
+        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT){
 			strideLength = currentStrideLength.format("%.2f");
         	strideLengthUnit = "m";
 		}
@@ -909,7 +907,7 @@ class SkatingView extends Ui.View {
     function updateTotalAvgStrideLengthLayer(dc){        
         var currentStrideLength = _fitManager.getTotalAvgStrideLength();
         
-        if (currentStrideLength != 0.0 && currentStrideLength != null && status != Controller.STAT_INIT){
+        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT){
 			strideLength = currentStrideLength.format("%.2f");
         	strideLengthUnit = "m";
 		}
@@ -924,7 +922,7 @@ class SkatingView extends Ui.View {
     var maxSpeedTitle = WatchUi.loadResource(Rez.Strings.label_speed);
     
     function updateMaxSpeedLayer(dc){
-        if (Activity.getActivityInfo().maxSpeed != 0.0 && Activity.getActivityInfo().maxSpeed != null && status != Controller.STAT_INIT){
+        if (Activity.getActivityInfo().maxSpeed != 0.0 && Activity.getActivityInfo().maxSpeed != null && status != controller.STAT_INIT){
 			maxSpeed = (Activity.getActivityInfo().maxSpeed * 3.6).format("%.1f");
 			maxSpeedUnit = "km/h";
 		}
@@ -939,7 +937,7 @@ class SkatingView extends Ui.View {
     var maxHeartTitle = WatchUi.loadResource(Rez.Strings.label_heart_rate);
     
     function updateMaxHeartRateLayer(dc){
-        if (Activity.getActivityInfo().maxHeartRate != 0.0 && Activity.getActivityInfo().maxHeartRate != null && status != Controller.STAT_INIT){
+        if (Activity.getActivityInfo().maxHeartRate != 0.0 && Activity.getActivityInfo().maxHeartRate != null && status != controller.STAT_INIT){
 			maxHeartRate = Activity.getActivityInfo().maxHeartRate.format("%i");
 			maxHeartRateUnit = "bpm";
 		}
@@ -953,7 +951,7 @@ class SkatingView extends Ui.View {
 	    
 	function updateTimerLayer(dc) {
 		var activityTimeSec = Activity.getActivityInfo().elapsedTime/1000;
-		if (activityTimeSec > 0 && status != Controller.STAT_INIT) {
+		if (activityTimeSec > 0 && status != controller.STAT_INIT) {
 			if (_fitManager.isRecording()){
 				drawTimerLayer(dc,activityTimeSec);
 	        }
@@ -970,7 +968,7 @@ class SkatingView extends Ui.View {
 	
 	function updateLapTimeLayer(dc){
 		var activityTimeSec = (_fitManager.getLapTime()/1000).toNumber();
-		if (activityTimeSec > 0 && status != Controller.STAT_INIT) {
+		if (activityTimeSec > 0 && status != controller.STAT_INIT) {
 			drawTimerLayer(dc,activityTimeSec);
 		}
 		else {
@@ -1161,13 +1159,13 @@ class SkatingView extends Ui.View {
     	dc.clear();
     	var text;
     	switch (status) {
-			case Controller.STAT_STD:
+			case controller.STAT_STD:
 				text = WatchUi.loadResource(Rez.Strings.view_title_current);
 				break;
-			case Controller.STAT_LAP:
+			case controller.STAT_LAP:
 				text = WatchUi.loadResource(Rez.Strings.view_title_lap);
 				break;
-			case Controller.STAT_TOTAL:
+			case controller.STAT_TOTAL:
 				text = WatchUi.loadResource(Rez.Strings.view_title_total);
 				break;
 			default:
@@ -1219,7 +1217,7 @@ class SkatingView extends Ui.View {
 		dc.drawLine(lineStartX, lineStartY, lineWidth + lineStartX, lineStartY + lineHeight);
 		
 		// Draw average symbol
-		if (status == Controller.STAT_LAP || status == Controller.STAT_TOTAL){
+		if (status == controller.STAT_LAP || status == controller.STAT_TOTAL){
         	dc.setColor(Gfx.COLOR_WHITE, backgroundColor);
 			dc.fillCircle(scale(120), scale(120), 11);
         	dc.setColor(Gfx.COLOR_WHITE, backgroundColor);
@@ -1231,17 +1229,4 @@ class SkatingView extends Ui.View {
 			dc.drawLine(scale(115.5), scale(127), scale(125.5), scale(113));
 		}
 	}
-	
-	
-	
-	// Rolling window
-	/*
-	var cadenceRollingWindowSize = 60;
-	var array = new [cadenceRollingWindowSize];
-	for( var i = 0; i < cadenceRollingWindowSize; i += 1 ) {
-		array[i] = new [2];
-	}
-	*/
-	
-
 }
