@@ -62,8 +62,8 @@ class ActivityController {
 		WatchUi.switchToView(new Rez.Menus.ChooseSport(), new ChooseSportMenuDelegate(), WatchUi.SLIDE_RIGHT);
 	}	
     
-    public function chooseSportAndShowDataFields() {
-    	WatchUi.switchToView(_activityView, new ActivityDelegate(), WatchUi.SLIDE_RIGHT);
+    function chooseSportAndShowDataFields() {
+    	WatchUi.switchToView(_activityView, new ActivityDelegate(), WatchUi.SLIDE_LEFT);
 		timerUpdate.start(method(:refreshDataAndView), REFRESH_TIME, true);
     }
     
