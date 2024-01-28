@@ -1,0 +1,4 @@
+<menu id="ChooseSport">    
+    <menu-item id="inlineSkating" label="@Strings.label_inline_skating" />
+    <menu-item id="iceSkating" label="@Strings.label_ice_skating" />
+</menu>

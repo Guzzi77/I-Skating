@@ -44,6 +44,8 @@
 	<string id="label_stride_length">Schrittlänge</string>
 	<string id="label_heart_rate">Herzfreq.</string>
 	<string id="label_stopped">Gestoppt</string>
+    <string id="label_ice_skating">Schlittschuhlaufen</string>
+	<string id="label_inline_skating">Inline-Skaten</string>
 	
 	<string id="device_type">base</string>
 </strings>

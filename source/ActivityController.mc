@@ -6,10 +6,10 @@ using Toybox.Attention;
 using Toybox.Position;
 
 
-class Controller {
+class ActivityController {
 
 	hidden var _fitManager;
-	hidden var _skatingView;
+	hidden var _activityView;
 	
 	hidden var device;
 	
@@ -27,17 +27,19 @@ class Controller {
 	const STAT_MAP = 5;
 
 	const REFRESH_TIME = 1000;
+	const INIT_SCREEN_TIME = 1000;
 	
 	var firstView = STAT_STD;
 	var lastView = STAT_TOTAL;
 	
 
 	function initialize() {
+		System.println("ActivityController - initialized");
 		_fitManager = Application.getApp().fitManager;
-		_skatingView = Application.getApp().skatingView;
+		_activityView = Application.getApp().activityView;
 		status = STAT_IDLE;
 		var options = {
-         :acquisitionType => Position.LOCATION_CONTINUOUS
+        	:acquisitionType => Position.LOCATION_CONTINUOUS
      	};
         Position.enableLocationEvents(options, method(:onPosition));
         setupTimer();
@@ -48,17 +50,20 @@ class Controller {
 	
 	function setupTimer() {
 		timerUpdate = new Timer.Timer();
-		timerUpdate.start(method(:removeInitViewAndStartUp), 1500, false);
+		timerUpdate.start(method(:showChooseSportMenu), INIT_SCREEN_TIME, false);
 	}
 	
 	function refreshDataAndView() {
 		_fitManager.updateFitData();
 		WatchUi.requestUpdate();
 	}
-	
+
+	function showChooseSportMenu() {
+		WatchUi.switchToView(new Rez.Menus.ChooseSport(), new ChooseSportMenuDelegate(), WatchUi.SLIDE_RIGHT);
+	}	
     
-    function removeInitViewAndStartUp() {
-    	WatchUi.switchToView(_skatingView, new SkatingDelegate(), WatchUi.SLIDE_RIGHT);
+    public function chooseSportAndShowDataFields() {
+    	WatchUi.switchToView(_activityView, new ActivityDelegate(), WatchUi.SLIDE_RIGHT);
 		timerUpdate.start(method(:refreshDataAndView), REFRESH_TIME, true);
     }
     
@@ -69,11 +74,11 @@ class Controller {
     	if (_fitManager.hasSession() == false) { // Inital start
 			_fitManager.sessionStart();
 			status = STAT_STD;
-    		_skatingView.manageStatus(status);
+    		_activityView.manageStatus(status);
 	   		userFeedbackNotification(1);					// Give feedback that Session started
 	    }
 	    else { // During activity
-			WatchUi.pushView(new Rez.Menus.MainMenu(), new SkatingMenuStopDelegate(), WatchUi.SLIDE_UP);
+			WatchUi.pushView(new Rez.Menus.MainMenu(), new MainMenuDelegate(), WatchUi.SLIDE_LEFT);
 	   		userFeedbackNotification(0);					// Give feedback that Session paused
 	    }
     }
@@ -87,11 +92,11 @@ class Controller {
 				WatchUi.requestUpdate();
 			} 
 	    	status = STAT_LAP;
-	    	_skatingView.manageStatus(status);
+	    	_activityView.manageStatus(status);
 	    	userFeedbackNotification(2);
 	    }
-	    else if (_fitManager.hasSession()){
-	    	WatchUi.pushView(new Rez.Menus.MainMenu(), new SkatingMenuStopDelegate(), WatchUi.SLIDE_UP);
+	    else if (_fitManager.hasSession()) {
+	    	WatchUi.pushView(new Rez.Menus.MainMenu(), new MainMenuDelegate(), WatchUi.SLIDE_UP);
 	    }
 	    else {
 	    	System.exit();
@@ -103,14 +108,14 @@ class Controller {
         if (device.equals("maps") && (posInfo.accuracy > 3)) {
         	lastView = STAT_MAP;
         }
-    	if (status != STAT_IDLE && status != STAT_INIT){
+    	if (status != STAT_IDLE && status != STAT_INIT) {
 	    	var initStatus = status;
 	    	System.println("Incomming status: " + initStatus + ". switchPage: " + switchPage);
 			if (status == STAT_MAP) {
 				WatchUi.popView(WatchUi.SLIDE_RIGHT);
 				WatchUi.requestUpdate();
 			}
-	    	if (hasLab){
+	    	if (hasLab) {
 	    		if (switchPage > 0 && status >= lastView) {
 	    			status = firstView;
 	    		} else if (switchPage < 0 && status <= firstView) {
@@ -121,34 +126,33 @@ class Controller {
 	    	} 
 	    	else {
 	    		status += switchPage;
-	    		if (status == STAT_LAP){
+	    		if (status == STAT_LAP) {
 	    			status += switchPage;
-	    		} else if (status > lastView){
+	    		} else if (status > lastView) {
 	    			status = firstView;
-	    		} else if (status < firstView){
+	    		} else if (status < firstView) {
 	    			status = lastView;
 	    		}
 	    	}
 	    	System.println("Handle page switch. Has Lab: " + hasLab + ". New status: " + status);
 			if (initStatus != status && status != STAT_MAP) {
-				_skatingView.manageStatus(status);
+				_activityView.manageStatus(status);
 			}
 			if (status == STAT_MAP) {
-				WatchUi.pushView(new SkatingMapView(), new SkatingDelegate(), WatchUi.SLIDE_LEFT);
+				WatchUi.pushView(new MapView(), new ActivityDelegate(), WatchUi.SLIDE_LEFT);
 			}
 			WatchUi.requestUpdate();
 		}
     }
     
-    function stopRecording(save){
+    function stopRecording(save) {
     	_fitManager.stopRecording(save);
     	userFeedbackNotification(0);
     }
     
-    function getStatus(){
+    function getStatus() {
     	return status;
-    }
-    	
+    }	
 	
 	function userFeedbackNotification(eventType) {
 		var toneProfile = null;

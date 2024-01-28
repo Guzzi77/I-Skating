@@ -11,7 +11,7 @@ import Toybox.WatchUi;
 import Toybox.Activity;
 
 //! This view shows a map with the current device location
-class SkatingMapView extends WatchUi.MapTrackView {
+class MapView extends WatchUi.MapTrackView {
 
     //! Constructor
     public function initialize() {

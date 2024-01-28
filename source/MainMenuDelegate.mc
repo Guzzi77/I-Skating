@@ -3,13 +3,13 @@ using Toybox.WatchUi;
 using Toybox.System;
 using Toybox.Application;
 
-class SkatingMenuStopDelegate extends WatchUi.MenuInputDelegate {
+class MainMenuDelegate extends WatchUi.MenuInputDelegate {
 
 	hidden var _fitManager;
 	hidden var _controller;
 
     function initialize() {
-        System.println("initialize SkatingMenuDelegate");
+        System.println("initialize MainMenuDelegate");
         MenuInputDelegate.initialize();
         _fitManager = Application.getApp().fitManager;
         _controller = Application.getApp().controller;

@@ -1,7 +1,7 @@
 using Toybox.WatchUi;
 using Toybox.Graphics;
 
-class SkatingInitView extends WatchUi.View {
+class InitView extends WatchUi.View {
 
 	hidden var initImage;
 

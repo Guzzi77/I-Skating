@@ -10,7 +10,7 @@ using Toybox.System as Sys;
 using Toybox.UserProfile;
 using Toybox.Timer;
 
-class SkatingView extends Ui.View {
+class ActivityView extends Ui.View {
 
 	hidden var _fitManager;
 	
@@ -32,7 +32,7 @@ class SkatingView extends Ui.View {
 	const ICON_CONNECTED_HEART_EMPTY = "2";
 	const ICON_CONNECTED_HEART_FILLED = "3";
 
-	var controller = Controller;
+	var controller = ActivityController;
 
 	// --- Layers ---
 	// General:
@@ -106,7 +106,6 @@ class SkatingView extends Ui.View {
 	var stdFontHeight; 						// Is adjusted in onLayout()
 
     function initialize() {
-        System.println("initialize SkatingView");
         View.initialize();
         
         _fitManager = Application.getApp().fitManager;
@@ -130,8 +129,7 @@ class SkatingView extends Ui.View {
     }
 
     // Load your resources here
-    function onLayout(dc) {    
-        System.println("onLayout SkatingView");
+    function onLayout(dc) {
         
         dc.setColor(foregroundColor, backgroundColor);
         dc.clear();
@@ -254,7 +252,7 @@ class SkatingView extends Ui.View {
     		viewNameLayer = new Ui.Layer(bottom);
     		addLayer(viewNameLayer);
     	}
-    	if (status == controller.STAT_LAP){
+    	if (status == controller.STAT_LAP) {
     	
 	        heartRateLayer = new Ui.Layer(full);
 	        addLayer(heartRateLayer);
@@ -328,44 +326,44 @@ class SkatingView extends Ui.View {
     	}
     }
     
-    	function addLayerIfHidden(layer){
-    		if (getLayerIndex(layer) == -1) {
-    			addLayer(layer);
-    		}
-    	}
-    
-    	// Scaling functions
-    	
-    	// Adjust position of layer to screen size
-	    function rescaleLayerPos(layer){
-	    	layer.setX(scale(layer.getX()));
-	    	layer.setY(scale(layer.getY()));	
-	    }
-	    
-	    // Scale any position of standard screen to present screen size
-	    function scale(pos){
-	    	var devicePos = pos * screenSizeScale;
-	    	return devicePos.toNumber();
-	    }
-	    
-	    // Returns text size (number) which fits to screen size
-	    function rescaleStdFont(){
-	    	var fontSize = Gfx.FONT_XTINY;	// Start with smallest font size
-	    	var fontSizeScaleFactor = Gfx.getFontHeight(fontSize) / stdFontHeight;
-	    	while (fontSizeScaleFactor < screenSizeScale) {
-	    		fontSize++;
-	    		fontSizeScaleFactor = Gfx.getFontHeight(fontSize as Gfx.FontType) / stdFontHeight;
-	    	}
-	    	stdFont = fontSize;
-	    	stdFontHeight = Gfx.getFontHeight(stdFont);
-	    }
+	function addLayerIfHidden(layer) {
+		if (getLayerIndex(layer) == -1) {
+			addLayer(layer);
+		}
+	}
+
+	// Scaling functions
+	
+	// Adjust position of layer to screen size
+	function rescaleLayerPos(layer) {
+		layer.setX(scale(layer.getX()));
+		layer.setY(scale(layer.getY()));	
+	}
+	
+	// Scale any position of standard screen to present screen size
+	function scale(pos) {
+		var devicePos = pos * screenSizeScale;
+		return devicePos.toNumber();
+	}
+	
+	// Returns text size (number) which fits to screen size
+	function rescaleStdFont() {
+		var fontSize = Gfx.FONT_XTINY;	// Start with smallest font size
+		var fontSizeScaleFactor = Gfx.getFontHeight(fontSize) / stdFontHeight;
+		while (fontSizeScaleFactor < screenSizeScale) {
+			fontSize++;
+			fontSizeScaleFactor = Gfx.getFontHeight(fontSize as Gfx.FontType) / stdFontHeight;
+		}
+		stdFont = fontSize;
+		stdFontHeight = Gfx.getFontHeight(stdFont);
+	}
 
 
     // Called when this View is brought to the foreground. Restore
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-        System.println("onShow SkatingView");
+        System.println("ActivityView - onShow");
         System.println("Steps at onShow: " + ActivityMonitor.getInfo().steps);
     }
 
@@ -398,8 +396,6 @@ class SkatingView extends Ui.View {
 
     // Update the view
     function onUpdate(dc) {
-    	
-        System.println("onUpdate SkatingView");
         dc.setColor(foregroundColor, backgroundColor);
         dc.clear();
         // Call the parent onUpdate function to redraw the layout
@@ -407,186 +403,185 @@ class SkatingView extends Ui.View {
     	dc.setColor(foregroundColor, backgroundColor);
     	dc.clear();
         
-        if (status == controller.STAT_INIT){
+        if (status == controller.STAT_INIT) {
         	updateInit();
         }
         
-        if (status == controller.STAT_STD){
+        if (status == controller.STAT_STD) {
         	updateStd();
         }
         
-        if (status == controller.STAT_LAP){
+        if (status == controller.STAT_LAP) {
         	updateLap();
         }
         
-        if (status == controller.STAT_TOTAL){
+        if (status == controller.STAT_TOTAL) {
         	updateTotal();
         }
 		
     }
     
-	    function updateInit(){
-	    	updateGrid(gridLayer.getDc());
-	        updateConnections(iconsConnectedLayer.getDc());
-	        updatePositionAccuracy(accuracyLayer.getDc());
-	        updateBattery(batteryLayer.getDc());
-	        updateClock(clockLayer.getDc());
-	    	updateHeartRateLayer(heartRateLayer.getDc());
-	    	updateSpeed(speedLayer.getDc());
-	        //updateGlideTime(glideTimeLayer.getDc());
-	        //updateCadence(cadenceLayer.getDc());
-	        //updateStrideLength(strideLengthLayer.getDc());
-	        updateEnergyExpenditure(energyExpenditureLayer.getDc());
-	        updateTrainingEffect(trainingEffectLayer.getDc());
-	        updateCaloriesLayer(caloriesLayer.getDc());
-	        updateTimerLayer(timerLayer.getDc());
-			updateElapsedDistance(distanceLayer.getDc());
-	    }
-	    
-	    function updateStd(){
-	    	updateGrid(gridLayer.getDc());
-	    	updateHeartRateLayer(heartRateLayer.getDc());
-	    	updateSpeed(speedLayer.getDc());
-	        //updateGlideTime(glideTimeLayer.getDc());
-	        //updateCadence(cadenceLayer.getDc());
-	        //updateStrideLength(strideLengthLayer.getDc());
-	        updateEnergyExpenditure(energyExpenditureLayer.getDc());
-	        updateTrainingEffect(trainingEffectLayer.getDc());
-	        updateCaloriesLayer(caloriesLayer.getDc());
-	        updateTimerLayer(timerLayer.getDc());
-			updateElapsedDistance(distanceLayer.getDc());
-	        updateViewNameLayer(viewNameLayer.getDc());
-	    }
-	    
-	    function updateLap(){
-	    	updateGrid(gridLayer.getDc());
-	    	updateHeartRateLayer(heartRateLayer.getDc());
-	    	updateLapAvgSpeedLayer(lapAvgSpeedLayer.getDc());
-			updateLapAvgCadenceLayer(lapAvgCadenceLayer.getDc());
-			updateLapAvgGlideTimeLayer(lapAvgGlideTimeLayer.getDc());
-			updateLapAvgStrideLengthLayer(lapAvgStrideLengthLayer.getDc());
-			updateLapTimeLayer(lapTimeLayer.getDc());
-			updateLapDistanceLayer(lapDistanceLayer.getDc());
-	        updateViewNameLayer(viewNameLayer.getDc());
-	    }
-	    
-	    function updateTotal(){
-	    	updateGrid(gridLayer.getDc());
-	        updateConnections(iconsConnectedLayer.getDc());
-	        updatePositionAccuracy(accuracyLayer.getDc());
-	        updateBattery(batteryLayer.getDc());
-	        updateClock(clockLayer.getDc());
-	    	updateHeartRateLayer(heartRateLayer.getDc());
-	    	updateTotalAvgSpeedLayer(totalAvgSpeedLayer.getDc());
-			updateTotalAvgGlideTimeLayer(totalAvgGlideTimeLayer.getDc());
-	        updateTotalAvgCadenceLayer(totalAvgCadenceLayer.getDc());
-	        updateTotalAvgStrideLengthLayer(totalAvgStrideLengthLayer.getDc());
-	        updateMaxSpeedLayer(maxSpeedLayer.getDc());
-	        updateMaxHeartRateLayer(maxHeartRateLayer.getDc());
-	        //updateTimerLayer(timerLayer.getDc());
-	        //updateElapsedDistance(distanceLayer.getDc());
-	        updateViewNameLayer(viewNameLayer.getDc());
-	    }
-    
-    // --- Draw helper functions ---
+	function updateInit() {
+		updateGrid(gridLayer.getDc());
+		updateConnections(iconsConnectedLayer.getDc());
+		updatePositionAccuracy(accuracyLayer.getDc());
+		updateBattery(batteryLayer.getDc());
+		updateClock(clockLayer.getDc());
+		updateHeartRateLayer(heartRateLayer.getDc());
+		updateSpeed(speedLayer.getDc());
+		//updateGlideTime(glideTimeLayer.getDc());
+		//updateCadence(cadenceLayer.getDc());
+		//updateStrideLength(strideLengthLayer.getDc());
+		updateEnergyExpenditure(energyExpenditureLayer.getDc());
+		updateTrainingEffect(trainingEffectLayer.getDc());
+		updateCaloriesLayer(caloriesLayer.getDc());
+		updateTimerLayer(timerLayer.getDc());
+		updateElapsedDistance(distanceLayer.getDc());
+	}
 	
-		// Return largest possible font for DC
-		function maxFontDc(dc,text,isNumber) {
-	    	return maxFont(dc,text,isNumber,dc.getWidth(),dc.getHeight());			
+	function updateStd() {
+		updateGrid(gridLayer.getDc());
+		updateHeartRateLayer(heartRateLayer.getDc());
+		updateSpeed(speedLayer.getDc());
+		//updateGlideTime(glideTimeLayer.getDc());
+		//updateCadence(cadenceLayer.getDc());
+		//updateStrideLength(strideLengthLayer.getDc());
+		updateEnergyExpenditure(energyExpenditureLayer.getDc());
+		updateTrainingEffect(trainingEffectLayer.getDc());
+		updateCaloriesLayer(caloriesLayer.getDc());
+		updateTimerLayer(timerLayer.getDc());
+		updateElapsedDistance(distanceLayer.getDc());
+		updateViewNameLayer(viewNameLayer.getDc());
+	}
+	
+	function updateLap() {
+		updateGrid(gridLayer.getDc());
+		updateHeartRateLayer(heartRateLayer.getDc());
+		updateLapAvgSpeedLayer(lapAvgSpeedLayer.getDc());
+		updateLapAvgCadenceLayer(lapAvgCadenceLayer.getDc());
+		updateLapAvgGlideTimeLayer(lapAvgGlideTimeLayer.getDc());
+		updateLapAvgStrideLengthLayer(lapAvgStrideLengthLayer.getDc());
+		updateLapTimeLayer(lapTimeLayer.getDc());
+		updateLapDistanceLayer(lapDistanceLayer.getDc());
+		updateViewNameLayer(viewNameLayer.getDc());
+	}
+	
+	function updateTotal() {
+		updateGrid(gridLayer.getDc());
+		updateConnections(iconsConnectedLayer.getDc());
+		updatePositionAccuracy(accuracyLayer.getDc());
+		updateBattery(batteryLayer.getDc());
+		updateClock(clockLayer.getDc());
+		updateHeartRateLayer(heartRateLayer.getDc());
+		updateTotalAvgSpeedLayer(totalAvgSpeedLayer.getDc());
+		updateTotalAvgGlideTimeLayer(totalAvgGlideTimeLayer.getDc());
+		updateTotalAvgCadenceLayer(totalAvgCadenceLayer.getDc());
+		updateTotalAvgStrideLengthLayer(totalAvgStrideLengthLayer.getDc());
+		updateMaxSpeedLayer(maxSpeedLayer.getDc());
+		updateMaxHeartRateLayer(maxHeartRateLayer.getDc());
+		//updateTimerLayer(timerLayer.getDc());
+		//updateElapsedDistance(distanceLayer.getDc());
+		updateViewNameLayer(viewNameLayer.getDc());
+	}
+
+	// --- Draw helper functions ---
+
+	// Return largest possible font for DC
+	function maxFontDc(dc,text,isNumber) {
+		return maxFont(dc,text,isNumber,dc.getWidth(),dc.getHeight());			
+	}
+	
+	function maxFont(dc,text,isNumber,width,height) {
+		if (text == "") {
+			return 0;
 		}
-		
-		function maxFont(dc,text,isNumber,width,height) {
-			if (text == "") {
-				return 0;
+		var font = Gfx.FONT_XTINY;						// Start with smallest font size
+		var textStr = (text instanceof Toybox.Lang.String) ? text : text.toString();
+		var textDim = dc.getTextDimensions(textStr, font);
+		while (width >= textDim[0] && height >= textDim[1]) {
+			font++;
+			if (font == 9) {
+				textDim[0] = width;
+				textDim[1] = height;
 			}
-			var font = Gfx.FONT_XTINY;						// Start with smallest font size
-			var textStr = (text instanceof Toybox.Lang.String) ? text : text.toString();
-			var textDim = dc.getTextDimensions(textStr, font);
-	    	while (width >= textDim[0] && height >= textDim[1]) {
-	    		font++;
-	    		if (font == 9){
-	    			textDim[0] = width;
-	    			textDim[1] = height;
-	    		}
-	    		textDim = dc.getTextDimensions(textStr, font);
-	    	}
-	    	if (!isNumber) {
-	    		font = (font > 4) ? 4 : font;					// Check maximum font size
-	    	}
-	    	return (font > 0) ? font-1 : font;				// Check mimimum font size			
+			textDim = dc.getTextDimensions(textStr, font);
+		}
+		if (!isNumber) {
+			font = (font > 4) ? 4 : font;					// Check maximum font size
+		}
+		return (font > 0) ? font-1 : font;				// Check mimimum font size			
+	}
+	
+	// Center font vertically
+	// Returns y value for vertical font position
+	// height can be dc.getHeight()
+	function centerFontVert(height,font) {
+		var yPos = (height - Gfx.getFontHeight(font)) / 2.0;
+		return (yPos < 0.0) ? 0 : yPos;
+	}
+	
+	function drawValueUnit(dc, valueStr, unitStr)  {
+		dc.setColor(foregroundColor, backgroundColor);
+		dc.clear();
+		var dcW = dc.getWidth();
+		var dcH = dc.getHeight();
+		var spacer = dcW/20.0;
+			
+		// Value 
+		var fontValue = maxFont(dc, valueStr, true, dcW*3.0/4, dcH);
+		var fontValueWidth = dc.getTextDimensions(valueStr, fontValue)[0];
+		
+		// Unit 
+		if (unitStr != null) {
+			var fontUnit = maxFont(dc, unitStr , false, dcW - fontValueWidth - spacer, dcH);
+			fontUnit = (fontUnit > 0) ? fontUnit-1 : fontUnit;
+			var fontUnitWidth = dc.getTextDimensions(unitStr, fontUnit)[0];
+			fontValueWidth = dcW - fontUnitWidth - spacer;  // May be larger than 3/4 of with if unit width is small or none
+			dc.drawText(dcW, centerFontVert(dcH,fontUnit), fontUnit, unitStr, Gfx.TEXT_JUSTIFY_RIGHT);	
+		}
+		else {
+			fontValueWidth = dcW;
 		}
 		
-		// Center font vertically
-		// Returns y value for vertical font position
-		// height can be dc.getHeight()
-		function centerFontVert(height,font){
-			var yPos = (height - Gfx.getFontHeight(font)) / 2.0;
-	        return (yPos < 0.0) ? 0 : yPos;
+		fontValue = maxFont(dc, valueStr, true, fontValueWidth, dcH);  // Check if more space is avaible
+		dc.drawText(fontValueWidth/2, centerFontVert(dcH,fontValue),fontValue, valueStr, Gfx.TEXT_JUSTIFY_CENTER);	
+	}
+	
+	function drawValueUnitTitle(dc, valueStr, unitStr, titleStr)  {
+		dc.setColor(foregroundColor, backgroundColor);
+		dc.clear();
+		var dcW = dc.getWidth();
+		var dcH = dc.getHeight();
+		var spacer = dcW/20.0;
+		
+		// Title
+		var fontTitle = Gfx.FONT_XTINY;
+		var fontTitleHeight = dc.getTextDimensions(titleStr, fontTitle)[1];
+		dc.drawText(dcW/2, 0, fontTitle, titleStr, Gfx.TEXT_JUSTIFY_CENTER);	
+		
+		// Value 
+		var heightValue = dcH - fontTitleHeight;
+		var fontValue = maxFont(dc, valueStr, true, dcW*3.0/4, heightValue);
+		var fontValueWidth = dc.getTextDimensions(valueStr, fontValue)[0];
+		
+		// Unit 
+		if (unitStr != null) {
+			var fontUnit = maxFont(dc, unitStr , false, dcW - fontValueWidth - spacer, heightValue);
+			fontUnit = (fontUnit > 0) ? fontUnit-1 : fontUnit;
+			var fontUnitWidth = dc.getTextDimensions(unitStr, fontUnit)[0];
+			fontValueWidth = dcW - fontUnitWidth - spacer;  // May be larger than 3/4 of with if unit width is small or none
+			dc.drawText(dcW, centerFontVert(heightValue,fontUnit)+fontTitleHeight, fontUnit, unitStr, Gfx.TEXT_JUSTIFY_RIGHT);	
 		}
-	    
-	    function drawValueUnit(dc, valueStr, unitStr)  {
-	    	dc.setColor(foregroundColor, backgroundColor);
-	    	dc.clear();
-			var dcW = dc.getWidth();
-	        var dcH = dc.getHeight();
-	        var spacer = dcW/20.0;
-		        
-	        // Value 
-	        var fontValue = maxFont(dc, valueStr, true, dcW*3.0/4, dcH);
-	        var fontValueWidth = dc.getTextDimensions(valueStr, fontValue)[0];
-	        
-	        // Unit 
-	        if (unitStr != null){
-	        	var fontUnit = maxFont(dc, unitStr , false, dcW - fontValueWidth - spacer, dcH);
-		        fontUnit = (fontUnit > 0) ? fontUnit-1 : fontUnit;
-		        var fontUnitWidth = dc.getTextDimensions(unitStr, fontUnit)[0];
-		        fontValueWidth = dcW - fontUnitWidth - spacer;  // May be larger than 3/4 of with if unit width is small or none
-	        	dc.drawText(dcW, centerFontVert(dcH,fontUnit), fontUnit, unitStr, Gfx.TEXT_JUSTIFY_RIGHT);	
-	        }
-	        else {
-	        	fontValueWidth = dcW;
-	        }
-	        
-	        fontValue = maxFont(dc, valueStr, true, fontValueWidth, dcH);  // Check if more space is avaible
-	        dc.drawText(fontValueWidth/2, centerFontVert(dcH,fontValue),fontValue, valueStr, Gfx.TEXT_JUSTIFY_CENTER);	
-	    }
-	    
-	    function drawValueUnitTitle(dc, valueStr, unitStr, titleStr)  {
-	    	dc.setColor(foregroundColor, backgroundColor);
-	    	dc.clear();
-			var dcW = dc.getWidth();
-	        var dcH = dc.getHeight();
-	        var spacer = dcW/20.0;
-	        
-	        // Title
-	        var fontTitle = Gfx.FONT_XTINY;
-	        var fontTitleHeight = dc.getTextDimensions(titleStr, fontTitle)[1];
-	        dc.drawText(dcW/2, 0, fontTitle, titleStr, Gfx.TEXT_JUSTIFY_CENTER);	
-	        
-	        // Value 
-	        var heightValue = dcH - fontTitleHeight;
-	        var fontValue = maxFont(dc, valueStr, true, dcW*3.0/4, heightValue);
-	        var fontValueWidth = dc.getTextDimensions(valueStr, fontValue)[0];
-	        
-	        // Unit 
-	        if (unitStr != null){
-	        	var fontUnit = maxFont(dc, unitStr , false, dcW - fontValueWidth - spacer, heightValue);
-		        fontUnit = (fontUnit > 0) ? fontUnit-1 : fontUnit;
-		        var fontUnitWidth = dc.getTextDimensions(unitStr, fontUnit)[0];
-		        fontValueWidth = dcW - fontUnitWidth - spacer;  // May be larger than 3/4 of with if unit width is small or none
-	        	dc.drawText(dcW, centerFontVert(heightValue,fontUnit)+fontTitleHeight, fontUnit, unitStr, Gfx.TEXT_JUSTIFY_RIGHT);	
-	        }
-	        else {
-	        	fontValueWidth = dcW;
-	        }
-	        
-	        fontValue = maxFont(dc, valueStr, true, fontValueWidth, heightValue);  // Check if more space is avaible
-	        dc.drawText(fontValueWidth/2, centerFontVert(heightValue,fontValue)+fontTitleHeight,fontValue, valueStr, Gfx.TEXT_JUSTIFY_CENTER);	
-	    }
+		else {
+			fontValueWidth = dcW;
+		}
+		
+		fontValue = maxFont(dc, valueStr, true, fontValueWidth, heightValue);  // Check if more space is avaible
+		dc.drawText(fontValueWidth/2, centerFontVert(heightValue,fontValue)+fontTitleHeight,fontValue, valueStr, Gfx.TEXT_JUSTIFY_CENTER);	
+	}
     
     
-    // --- Update layer functions ---
-    
+    // --- Update layer functions ---    
     
     function updateHeartRateLayer(dc) {
     	dc.setColor(foregroundColor, Gfx.COLOR_TRANSPARENT);
@@ -602,7 +597,7 @@ class SkatingView extends Ui.View {
 	    var lastHeartRate = 0;
 		var currentHeartRate = Activity.getActivityInfo().currentHeartRate;
 		var heartRate = 0;
-		if(currentHeartRate != null) {
+		if (currentHeartRate != null) {
 			heartRateText = currentHeartRate.toString();
 			heartRate = currentHeartRate;
 		}
@@ -610,23 +605,23 @@ class SkatingView extends Ui.View {
 			var heartRateHistory = ActivityMonitor.getHeartRateHistory(1, true);
 			var heartRateSample = heartRateHistory.next();
 			lastHeartRate = heartRateSample.heartRate;
-			if(heartRateSample == ActivityMonitor.INVALID_HR_SAMPLE){
+			if (heartRateSample == ActivityMonitor.INVALID_HR_SAMPLE) {
 				heartRateText = "---";
 			}
-			else{
+			else {
 				heartRateText = lastHeartRate.toString();
 				heartRate = lastHeartRate;
 			}
 		}
 		
 		var iconWidth = dc.getTextDimensions(ICON_HEART, customIcons)[0];
-		var iconHeight = dc.getTextDimensions(ICON_HEART, customIcons)[1];
+		// var iconHeight = dc.getTextDimensions(ICON_HEART, customIcons)[1]; /// TODO: remove
 		var spacer = dcW/40.0;
         
 		var hrWidth = dcW-iconWidth-spacer;
     	var fontHR = maxFont(dc, heartRateText, true, hrWidth, maxHRFontHeight);
         var fontHRWidth = dc.getTextDimensions(heartRateText, fontHR)[0];
-        var fontHRHeight = dc.getTextDimensions(heartRateText, fontHR)[1];
+        // var fontHRHeight = dc.getTextDimensions(heartRateText, fontHR)[1];  // TODO: remove
         
         var xPos = dcW/2 - spacer - iconWidth/2 - fontHRWidth/2;
         
@@ -645,7 +640,7 @@ class SkatingView extends Ui.View {
         var zoneColors = [Gfx.COLOR_LT_GRAY, Gfx.COLOR_BLUE, Gfx.COLOR_GREEN, Gfx.COLOR_ORANGE, Gfx.COLOR_RED];
         for( var i = 1; i < genericZoneInfo.size(); i += 1 ) {
         	dc.setColor(zoneColors[i-1], Gfx.COLOR_TRANSPARENT);
-        	if (heartRate >= genericZoneInfo[i-1] && heartRate < genericZoneInfo[i]){
+        	if (heartRate >= genericZoneInfo[i-1] && heartRate < genericZoneInfo[i]) {
         		dc.drawText(xPos, centerFontVert(maxHRFontHeight,customIcons)+posYHR,customIcons, ICON_HEART, Gfx.TEXT_JUSTIFY_CENTER);	
         		dc.setPenWidth(posYHR/2);
         	}
@@ -673,7 +668,7 @@ class SkatingView extends Ui.View {
     var speedUnit = "km/h";
     var speedTitle = WatchUi.loadResource(Rez.Strings.label_speed);
     
-	function updateSpeed(dc){
+	function updateSpeed(dc) {
 		var currentSpeed = Activity.getActivityInfo().currentSpeed;
 		if (currentSpeed != null && currentSpeed != 0 && status != controller.STAT_INIT) {
 			speed = (currentSpeed * 3.6).format("%.1f");
@@ -682,7 +677,7 @@ class SkatingView extends Ui.View {
 		drawValueUnitTitle(dc, speed, speedUnit, speedTitle);
 	}
 	
-    function updateLapAvgSpeedLayer(dc){
+    function updateLapAvgSpeedLayer(dc) {
 		var currentSpeed = _fitManager.getLapAvgVelocity();
 		if (currentSpeed != null && currentSpeed != 0 && status != controller.STAT_INIT) {
 			speed = (currentSpeed * 3.6).format("%.1f");
@@ -691,7 +686,7 @@ class SkatingView extends Ui.View {
 		drawValueUnitTitle(dc, speed, speedUnit, speedTitle);
 	}
 	
-	function updateTotalAvgSpeedLayer(dc){
+	function updateTotalAvgSpeedLayer(dc) {
 		var currentSpeed = _fitManager.getTotalAvgVelocity();
 		if (currentSpeed != null && currentSpeed != 0 && status != controller.STAT_INIT) {
 			speed = (currentSpeed * 3.6).format("%.1f");
@@ -707,34 +702,34 @@ class SkatingView extends Ui.View {
     var distanceUnit = "m";
     var distanceTitle = WatchUi.loadResource(Rez.Strings.label_distance);
     
-    function updateElapsedDistance(dc){    
+    function updateElapsedDistance(dc) {    
         var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
 		drawDistance(dc,elapsedDistance);
     }
     
-    function updateLapDistanceLayer(dc){  
+    function updateLapDistanceLayer(dc) {  
 		var elapsedDistance = _fitManager.getLapDistance();
 		drawDistance(dc,elapsedDistance);
     }
     
-    	function drawDistance(dc,elapsedDistance){  
-	        System.println("Elapsed distance: " + elapsedDistance);
-	        if (elapsedDistance != null && elapsedDistance != 0 && status != controller.STAT_INIT){
-	        	if (elapsedDistance < 1000){
-	        		distance = elapsedDistance.format("%i");
-	        		distanceUnit = "m";
-	        	}
-	        	else if (elapsedDistance < 10000){
-	        		distance = (elapsedDistance/1000.0).format("%.2f");
-	        		distanceUnit = "km";
-	        	}
-	        	else {
-	        		distance = (elapsedDistance/1000.0).format("%.1f");
-	        		distanceUnit = "km";
-	        	}
+	function drawDistance(dc,elapsedDistance) {  
+		System.println("Elapsed distance: " + elapsedDistance);
+		if (elapsedDistance != null && elapsedDistance != 0 && status != controller.STAT_INIT) {
+			if (elapsedDistance < 1000) {
+				distance = elapsedDistance.format("%i");
+				distanceUnit = "m";
 			}
-			drawValueUnitTitle(dc, distance, distanceUnit, distanceTitle);	
-    	}
+			else if (elapsedDistance < 10000) {
+				distance = (elapsedDistance/1000.0).format("%.2f");
+				distanceUnit = "km";
+			}
+			else {
+				distance = (elapsedDistance/1000.0).format("%.1f");
+				distanceUnit = "km";
+			}
+		}
+		drawValueUnitTitle(dc, distance, distanceUnit, distanceTitle);	
+	}
     	
     	
     // Energy Expenditure
@@ -758,8 +753,8 @@ class SkatingView extends Ui.View {
     var trainingEffectUnit = " ";
     var trainingEffectTitle = WatchUi.loadResource(Rez.Strings.label_training_effect);
     
-	function updateTrainingEffect(dc){
-        if (Activity.getActivityInfo().trainingEffect != 0.0 && Activity.getActivityInfo().trainingEffect != null && status != controller.STAT_INIT){
+	function updateTrainingEffect(dc) {
+        if (Activity.getActivityInfo().trainingEffect != 0.0 && Activity.getActivityInfo().trainingEffect != null && status != controller.STAT_INIT) {
 			trainingEffect = Activity.getActivityInfo().trainingEffect.format("%.1f");
 			trainingEffectUnit = " ";
 		}
@@ -773,8 +768,8 @@ class SkatingView extends Ui.View {
     var caloriesUnit = "kcal";
     var caloriesTitle = WatchUi.loadResource(Rez.Strings.label_calories);
     
-	function updateCaloriesLayer(dc){
-        if (Activity.getActivityInfo().calories != 0.0 && Activity.getActivityInfo().calories != null && status != controller.STAT_INIT){
+	function updateCaloriesLayer(dc) {
+        if (Activity.getActivityInfo().calories != 0.0 && Activity.getActivityInfo().calories != null && status != controller.STAT_INIT) {
 			calories = Activity.getActivityInfo().calories.format("%i");
 			caloriesUnit = "kcal";
 		}
@@ -788,19 +783,19 @@ class SkatingView extends Ui.View {
     var glideTimeUnit = "s";
     var glideTimeTitle = WatchUi.loadResource(Rez.Strings.label_glide_time);
     
-    function updateGlideTime(dc){ 
-        if (_fitManager.getGlideTime() != 0.0 && status != controller.STAT_INIT){
+    function updateGlideTime(dc) { 
+        if (_fitManager.getGlideTime() != 0.0 && status != controller.STAT_INIT) {
 			glideTime = _fitManager.getGlideTime().format("%.1f");
 			glideTimeUnit = "s";
 		}
         drawValueUnitTitle(dc, glideTime, glideTimeUnit, glideTimeTitle);
     }
     
-	function updateLapAvgGlideTimeLayer(dc){
+	function updateLapAvgGlideTimeLayer(dc) {
         var avgGT = _fitManager.getLapAvgGlideTime();
         
-        if (avgGT != 0.0 && avgGT != null && status != controller.STAT_INIT){
-        	if (avgGT < 10){
+        if (avgGT != 0.0 && avgGT != null && status != controller.STAT_INIT) {
+        	if (avgGT < 10) {
 				glideTime = avgGT.format("%.2f");
 				glideTimeUnit = "s";
 			}
@@ -812,11 +807,11 @@ class SkatingView extends Ui.View {
         drawValueUnitTitle(dc, glideTime, glideTimeUnit, glideTimeTitle);
     }
     
-    function updateTotalAvgGlideTimeLayer(dc){
+    function updateTotalAvgGlideTimeLayer(dc) {
         var avgGT = _fitManager.getTotalAvgGlideTime();
         
-        if (avgGT != 0.0 && avgGT != null && status != controller.STAT_INIT){
-        	if (avgGT < 100){
+        if (avgGT != 0.0 && avgGT != null && status != controller.STAT_INIT) {
+        	if (avgGT < 100) {
 				glideTime = avgGT.format("%.2f");
 				glideTimeUnit = "s";
 			}
@@ -835,19 +830,19 @@ class SkatingView extends Ui.View {
     var cadenceUnit = "spm";
     var cadenceTitle = WatchUi.loadResource(Rez.Strings.label_cadence);
     
-    function updateCadence(dc){ 
-        if (_fitManager.getCadence() != 0.0 && status != controller.STAT_INIT){
+    function updateCadence(dc) { 
+        if (_fitManager.getCadence() != 0.0 && status != controller.STAT_INIT) {
 			cadence = _fitManager.getCadence().toNumber().format("%i");
 			cadenceUnit = "spm";
 		}
         drawValueUnitTitle(dc, cadence, cadenceUnit, cadenceTitle);
     }
     
-	function updateLapAvgCadenceLayer(dc){
+	function updateLapAvgCadenceLayer(dc) {
         var avgCad = _fitManager.getLapAvgCadence();
         
-        if (avgCad != 0.0 && avgCad != null && status != controller.STAT_INIT){
-        	if (avgCad < 100){
+        if (avgCad != 0.0 && avgCad != null && status != controller.STAT_INIT) {
+        	if (avgCad < 100) {
 				cadence = avgCad.format("%.1f");
 				cadenceUnit = "spm";
 			}
@@ -860,11 +855,11 @@ class SkatingView extends Ui.View {
         drawValueUnitTitle(dc, cadence, cadenceUnit, cadenceTitle);
     }
     
-    function updateTotalAvgCadenceLayer(dc){
+    function updateTotalAvgCadenceLayer(dc) {
         var avgCad = _fitManager.getTotalAvgCadence();
         
-        if (avgCad != 0.0 && avgCad != null && status != controller.STAT_INIT){
-        	if (avgCad < 100){
+        if (avgCad != 0.0 && avgCad != null && status != controller.STAT_INIT) {
+        	if (avgCad < 100) {
 				cadence = avgCad.format("%.1f");
 				cadenceUnit = "spm";
 			}
@@ -884,36 +879,35 @@ class SkatingView extends Ui.View {
     var strideLengthUnit = "m";
     var strideLengthTitle = WatchUi.loadResource(Rez.Strings.label_stride_length);
     
-    function updateStrideLength(dc){        
+    function updateStrideLength(dc) {        
 		var currentStrideLength =  _fitManager.getStrideLength();
         
-        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT){
+        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT) {
 			strideLength = currentStrideLength.format("%.1f");
         	strideLengthUnit = "m";
 		}
         drawValueUnitTitle(dc, strideLength, strideLengthUnit, strideLengthTitle);
     }
     
-	function updateLapAvgStrideLengthLayer(dc){        
+	function updateLapAvgStrideLengthLayer(dc) {        
         var currentStrideLength = _fitManager.getLapAvgStrideLength();
         
-        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT){
+        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT) {
 			strideLength = currentStrideLength.format("%.2f");
         	strideLengthUnit = "m";
 		}
         drawValueUnitTitle(dc, strideLength, strideLengthUnit, strideLengthTitle);
     }    
     
-    function updateTotalAvgStrideLengthLayer(dc){        
+    function updateTotalAvgStrideLengthLayer(dc) {        
         var currentStrideLength = _fitManager.getTotalAvgStrideLength();
         
-        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT){
+        if (currentStrideLength != 0.0 && currentStrideLength != null && status != controller.STAT_INIT) {
 			strideLength = currentStrideLength.format("%.2f");
         	strideLengthUnit = "m";
 		}
         drawValueUnitTitle(dc, strideLength, strideLengthUnit, strideLengthTitle);
-    }    
-    
+    }
     
     // Max. Speed
     
@@ -921,8 +915,8 @@ class SkatingView extends Ui.View {
     var maxSpeedUnit = "km/h";
     var maxSpeedTitle = WatchUi.loadResource(Rez.Strings.label_speed);
     
-    function updateMaxSpeedLayer(dc){
-        if (Activity.getActivityInfo().maxSpeed != 0.0 && Activity.getActivityInfo().maxSpeed != null && status != controller.STAT_INIT){
+    function updateMaxSpeedLayer(dc) {
+        if (Activity.getActivityInfo().maxSpeed != 0.0 && Activity.getActivityInfo().maxSpeed != null && status != controller.STAT_INIT) {
 			maxSpeed = (Activity.getActivityInfo().maxSpeed * 3.6).format("%.1f");
 			maxSpeedUnit = "km/h";
 		}
@@ -936,8 +930,8 @@ class SkatingView extends Ui.View {
     var maxHeartRateUnit = "bpm";
     var maxHeartTitle = WatchUi.loadResource(Rez.Strings.label_heart_rate);
     
-    function updateMaxHeartRateLayer(dc){
-        if (Activity.getActivityInfo().maxHeartRate != 0.0 && Activity.getActivityInfo().maxHeartRate != null && status != controller.STAT_INIT){
+    function updateMaxHeartRateLayer(dc) {
+        if (Activity.getActivityInfo().maxHeartRate != 0.0 && Activity.getActivityInfo().maxHeartRate != null && status != controller.STAT_INIT) {
 			maxHeartRate = Activity.getActivityInfo().maxHeartRate.format("%i");
 			maxHeartRateUnit = "bpm";
 		}
@@ -952,7 +946,7 @@ class SkatingView extends Ui.View {
 	function updateTimerLayer(dc) {
 		var activityTimeSec = Activity.getActivityInfo().elapsedTime/1000;
 		if (activityTimeSec > 0 && status != controller.STAT_INIT) {
-			if (_fitManager.isRecording()){
+			if (_fitManager.isRecording()) {
 				drawTimerLayer(dc,activityTimeSec);
 	        }
 	        else {
@@ -966,7 +960,7 @@ class SkatingView extends Ui.View {
 	}
 	
 	
-	function updateLapTimeLayer(dc){
+	function updateLapTimeLayer(dc) {
 		var activityTimeSec = (_fitManager.getLapTime()/1000).toNumber();
 		if (activityTimeSec > 0 && status != controller.STAT_INIT) {
 			drawTimerLayer(dc,activityTimeSec);
@@ -976,75 +970,69 @@ class SkatingView extends Ui.View {
 		}
 	}
 	
-		function drawTimerLayer (dc,time) {
-			
-			if (_fitManager.isRecording()){
-	        	dc.setColor(foregroundColor, backgroundColor);
-	        }
-	        else {
-	        	dc.setColor(Gfx.COLOR_RED, backgroundColor);
-	        }
-			dc.clear();
-			
-			var dcW = dc.getWidth();
-	        var dcH = dc.getHeight();
-	        
-	        // Title
-	        var fontTitle = Gfx.FONT_XTINY;
-	        var fontTitleHeight = dc.getTextDimensions(timerTitle, fontTitle)[1];
-	        dc.drawText(dcW/2, 0, fontTitle, timerTitle, Gfx.TEXT_JUSTIFY_CENTER);	
-	        
-	        // Value 
-	        var heightValue = dcH - fontTitleHeight;
-			
-			var activityTimeSec = time;
-			var hr = activityTimeSec/3600; 
-			
-			if (hr > 0) {
-				var hourWidth = dcW/6.0;
-				var hourHeight = heightValue/2.0;
-				var spacer = dcW/10.0;
-				var hrStr = hr.toString();
-	        	var fontH = maxFont(dc, hrStr, true, hourWidth, hourHeight);
-		        var fontHWidth = dc.getTextDimensions(hrStr, fontH)[0];
-		        
-		        var msStr = toMS(activityTimeSec).toString();
-				var msWidth = dcW-hourWidth-spacer;
-	        	var fontMS = maxFont(dc, msStr, true, msWidth, heightValue);
-		        var fontMSWidth = dc.getTextDimensions(msStr, fontH)[0];
-		        
-		        var offsetX = (dcW-(fontMSWidth+spacer+hourWidth))/2;
-		        
-		        dc.drawText(fontHWidth/2+offsetX, centerFontVert(hourHeight,fontH)+fontTitleHeight,fontH, hrStr, Gfx.TEXT_JUSTIFY_CENTER);	
-		        dc.drawText(fontMSWidth/2+spacer+hourWidth+offsetX, centerFontVert(heightValue,fontMS)+fontTitleHeight,fontMS, msStr, Gfx.TEXT_JUSTIFY_CENTER);	
-	        }
-	        else {
-	        	drawValueUnitTitle(dc,toMS(activityTimeSec).toString(),null,timerTitle);
-	        }
+	function drawTimerLayer(dc,time) {		
+		if (_fitManager.isRecording()) {
+			dc.setColor(foregroundColor, backgroundColor);
 		}
-	
-		function toHMS(secs) {
-			var hr = secs/3600;
-			var min = (secs-(hr*3600))/60;
-			var sec = secs%60;
-			return hr.format("%02d")+":"+min.format("%02d")+":"+sec.format("%02d");
+		else {
+			dc.setColor(Gfx.COLOR_RED, backgroundColor);
 		}
+		dc.clear();
 		
-		function toMS(secs) {
-			var hr = secs/3600;
-			var min = (secs-(hr*3600))/60;
-			var sec = secs%60;
-			return min.format("%02d")+":"+sec.format("%02d");
-		}
+		var dcW = dc.getWidth();
+		var dcH = dc.getHeight();
 		
+		// Title
+		var fontTitle = Gfx.FONT_XTINY;
+		var fontTitleHeight = dc.getTextDimensions(timerTitle, fontTitle)[1];
+		dc.drawText(dcW/2, 0, fontTitle, timerTitle, Gfx.TEXT_JUSTIFY_CENTER);	
+		
+		// Value 
+		var heightValue = dcH - fontTitleHeight;
+		
+		var activityTimeSec = time;
+		var hr = activityTimeSec/3600; 
+		
+		if (hr > 0) {
+			var hourWidth = dcW/6.0;
+			var hourHeight = heightValue/2.0;
+			var spacer = dcW/10.0;
+			var hrStr = hr.toString();
+			var fontH = maxFont(dc, hrStr, true, hourWidth, hourHeight);
+			var fontHWidth = dc.getTextDimensions(hrStr, fontH)[0];
+			
+			var msStr = toMS(activityTimeSec).toString();
+			var msWidth = dcW-hourWidth-spacer;
+			var fontMS = maxFont(dc, msStr, true, msWidth, heightValue);
+			var fontMSWidth = dc.getTextDimensions(msStr, fontH)[0];
+			
+			var offsetX = (dcW-(fontMSWidth+spacer+hourWidth))/2;
+			
+			dc.drawText(fontHWidth/2+offsetX, centerFontVert(hourHeight,fontH)+fontTitleHeight,fontH, hrStr, Gfx.TEXT_JUSTIFY_CENTER);	
+			dc.drawText(fontMSWidth/2+spacer+hourWidth+offsetX, centerFontVert(heightValue,fontMS)+fontTitleHeight,fontMS, msStr, Gfx.TEXT_JUSTIFY_CENTER);	
+		}
+		else {
+			drawValueUnitTitle(dc,toMS(activityTimeSec).toString(),null,timerTitle);
+		}
+	}
+
+	function toHMS(secs) {
+		var hr = secs/3600;
+		var min = (secs-(hr*3600))/60;
+		var sec = secs%60;
+		return hr.format("%02d")+":"+min.format("%02d")+":"+sec.format("%02d");
+	}
 	
-	
+	function toMS(secs) {
+		var hr = secs/3600;
+		var min = (secs-(hr*3600))/60;
+		var sec = secs%60;
+		return min.format("%02d")+":"+sec.format("%02d");
+	}
 	
 	// General layers:
-	
-	
     
-    function updateClock(dc){
+    function updateClock(dc) {
         dc.setColor(foregroundColor, backgroundColor);	
     	dc.clear();
     	
@@ -1070,7 +1058,7 @@ class SkatingView extends Ui.View {
     	updatePositionAccuracy(accuracyLayer.getDc());
     }
     
-    	function updatePositionAccuracy(dc){
+    	function updatePositionAccuracy(dc) {
     		var info = Position.getInfo();
     		
         	dc.setColor(foregroundColor, backgroundColor);	
@@ -1122,7 +1110,7 @@ class SkatingView extends Ui.View {
         var dcH = dc.getHeight();
         
         // Draw battery status text
-        if (battery < 100){
+        if (battery < 100) {
 	        dc.setColor(foregroundColor, backgroundColor);
 		    dc.drawText(0, dcH-batteryTextHeight, Gfx.FONT_XTINY, battery.format("%d") + "%", Gfx.TEXT_JUSTIFY_LEFT);
 	    }
@@ -1175,8 +1163,8 @@ class SkatingView extends Ui.View {
     	dc.drawText(dc.getWidth()/2, 0, Gfx.FONT_XTINY, text, Gfx.TEXT_JUSTIFY_CENTER);
 	}
 		
-	function updateGrid(dc){
-		if (_fitManager.isRecording()){
+	function updateGrid(dc) {
+		if (_fitManager.isRecording()) {
         	dc.setColor(foregroundColor, Gfx.COLOR_TRANSPARENT);
         }
         else {
@@ -1217,7 +1205,7 @@ class SkatingView extends Ui.View {
 		dc.drawLine(lineStartX, lineStartY, lineWidth + lineStartX, lineStartY + lineHeight);
 		
 		// Draw average symbol
-		if (status == controller.STAT_LAP || status == controller.STAT_TOTAL){
+		if (status == controller.STAT_LAP || status == controller.STAT_TOTAL) {
         	dc.setColor(Gfx.COLOR_WHITE, backgroundColor);
 			dc.fillCircle(scale(120), scale(120), 11);
         	dc.setColor(Gfx.COLOR_WHITE, backgroundColor);

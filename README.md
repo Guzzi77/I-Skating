@@ -1,5 +1,5 @@
 # I-Skating
-[Inline/Ice Skating watch app in Garmin Connect IQ Store](//#TODO)
+[Inline/Ice Skating watch app in Garmin Connect IQ Store]
 [Fork of Inline Skating Pro: https://github.com/RobinBlaesing/Inline-Skating-Pro]
 
 
@@ -11,27 +11,3 @@ Track your inline skating activities with Inline Skating Pro and analyze your pe
 
 
 ![Inline Skating Pro Functions](https://github.com/Rodonex/Skating/blob/main/SkatingHero.png "App functions")
-
-
-
-## Inline skating metrics (complete activity and lap) 
-- Avg. cadence
-- Avg. glide time
-- Avg. stride length
-- Avg. speed
-- Max. speed
-
-## Training metrics 
-- Current energy expenditure in kilocalories per minute
-- Training effect score of the current activity
-- Max. heart rate
-- Current heart rate
-- Distance covered
-- Elapsed time
-- Current speed
-
-## Additional Information
-- GPS signal strength
-- Clock
-- Battery status
-- Phone connectivity

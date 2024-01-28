@@ -3,13 +3,13 @@ using Toybox.ActivityRecording;
 using Toybox.Activity;
 using Toybox.FitContributor;
 
-class SkatingDelegate  extends WatchUi.InputDelegate {		
+class ActivityDelegate extends WatchUi.InputDelegate {		
 
 	hidden var _controller;
 
     function initialize() {
-        System.println("initialize SkatingDelegate");
-        BehaviorDelegate.initialize();
+        System.println("initialize ActivityDelegate");
+        InputDelegate.initialize();
         _controller = Application.getApp().controller;
     }
 
@@ -24,12 +24,9 @@ class SkatingDelegate  extends WatchUi.InputDelegate {
 			case 5:
 			case 19:
 			case 20: { // ESC, LAP, RESET
-				System.println("onBack SkatingDelegate");
+				System.println("onBack ActivityDelegate");
 				if (Toybox has :ActivityRecording) {                          // check device for activity recording
 					_controller.handleLap();
-				}
-				else {
-					// This product doesn't\nhave FIT Support
 				}
 				return true;   
 			} 
@@ -37,12 +34,18 @@ class SkatingDelegate  extends WatchUi.InputDelegate {
 		}
     }
 
-	// function onPreviousPage() {
-	// 	_controller.handlePageSwitch(-1);
-	// }
-	
-	// function onNextPage() {
-	// 	_controller.handlePageSwitch(1);
-	// }
+    function onSwipe(swipeEvent) {
+		switch (swipeEvent.getDirection()) {
+			case 0: {
+				_controller.handlePageSwitch(-1);
+				return true;
+			}
+			case 2: {
+				_controller.handlePageSwitch(1);
+				return true;
+			}
+			default: return true;
+		}
+    }
 
 }
